@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ course.name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Online Courses</a>
+    <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+        <li><span class="mr-3">{{ user.first_name|default:user.username }}</span>
+            <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a></li>
+        {% else %}
+        <li><a class="btn btn-link" href="{% url 'onlinecourse:login' %}">Login</a>
+            <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+<div class="container-fluid mt-3">
+    <h2>{{ course.name }}</h2>
+    <p>{{ course.description }}</p>
+
+    <div class="card-columns-vertical">
+        {% for lesson in course.lesson_set.all %}
+        <div class="card mt-1">
+            <div class="card-header"><h5>Lesson {{ lesson.order|add:1 }}: {{ lesson.title }}</h5></div>
+            <div class="card-body">{{ lesson.content }}</div>
+        </div>
+        {% empty %}
+        <p class="text-muted">No lessons available.</p>
+        {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <hr>
+    <h4>Exam</h4>
+    <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="post">
+        {% csrf_token %}
+        {% for question in course.question_set.all %}
+        <div class="card mt-2">
+            <div class="card-header bg-secondary text-white">
+                {{ question.question_text }} <span class="float-right">({{ question.grade }} pt)</span>
+            </div>
+            <div class="card-body">
+                {% for choice in question.choice_set.all %}
+                <div class="form-check">
+                    <input type="checkbox" name="choice_{{ choice.id }}" id="choice_{{ choice.id }}"
+                           class="form-check-input" value="{{ choice.id }}">
+                    <label class="form-check-label" for="choice_{{ choice.id }}">{{ choice.choice_text }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">No exam questions for this course.</p>
+        {% endfor %}
+        {% if course.question_set.exists %}
+        <input class="btn btn-primary mt-3 mb-5" type="submit" value="Submit">
+        {% endif %}
+    </form>
+    {% endif %}
+</div>
+</body>
+</html>
