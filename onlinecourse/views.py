@@ -152,6 +152,7 @@ def show_exam_result(request, course_id, submission_id):
         'selected_ids': selected_ids,
         'grade': total_score,
         'max_score': max_score,
+        'possible': max_score,
         'percent': round(total_score * 100 / max_score) if max_score else 0,
         'passed': passed,
     }

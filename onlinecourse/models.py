@@ -134,4 +134,4 @@ class Submission(models.Model):
     choices = models.ManyToManyField(Choice)
 
     def __str__(self):
-        return "Submission " + str(self.id)
+        return "Submission " + str(self.id) + " (Enrollment " + str(self.enrollment_id) + ")"

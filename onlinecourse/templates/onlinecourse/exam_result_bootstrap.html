@@ -25,7 +25,7 @@
     <div class="card mt-3">
         <div class="card-header"><h5>Exam results — {{ course.name }}</h5></div>
         <div class="card-body">
-            <p><b>Total score: {{ grade }} / {{ max_score }} ({{ percent }}%)</b></p>
+            <p><b>Total score: {{ grade }} / {{ possible }} ({{ percent }}%)</b></p>
             {% for question in course.question_set.all %}
             <div class="mt-3">
                 <p><b>{{ question.question_text }}</b></p>
